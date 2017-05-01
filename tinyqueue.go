@@ -46,7 +46,9 @@ func (q *Queue) Peek() Item {
 	}
 	return q.data[0]
 }
-
+func (q *Queue) Len() int {
+	return q.length
+}
 func (q *Queue) down(pos int) {
 	data := q.data
 	halfLength := q.length >> 1
