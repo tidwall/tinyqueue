@@ -2,14 +2,19 @@ package tinyqueue
 
 import (
 	"math/rand"
+	"reflect"
 	"sort"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/assert"
 )
 
 type floatValue float64
+
+func assertEqual(t *testing.T, a, b interface{}) {
+	if !reflect.DeepEqual(a, b) {
+		t.Fatalf("'%v' != '%v'", a, b)
+	}
+}
 
 func (a floatValue) Less(b Item) bool {
 	return a < b.(floatValue)
@@ -34,12 +39,12 @@ func TestMaintainsPriorityQueue(t *testing.T) {
 	for i := 0; i < len(data); i++ {
 		q.Push(data[i])
 	}
-	assert.Equal(t, q.Peek(), sorted[0])
+	assertEqual(t, q.Peek(), sorted[0])
 	var result []Item
 	for q.length > 0 {
 		result = append(result, q.Pop())
 	}
-	assert.Equal(t, result, sorted)
+	assertEqual(t, result, sorted)
 }
 
 func TestAcceptsDataInConstructor(t *testing.T) {
@@ -48,7 +53,7 @@ func TestAcceptsDataInConstructor(t *testing.T) {
 	for q.length > 0 {
 		result = append(result, q.Pop())
 	}
-	assert.Equal(t, result, sorted)
+	assertEqual(t, result, sorted)
 }
 func TestHandlesEdgeCasesWithFewElements(t *testing.T) {
 	q := New(nil)
@@ -59,7 +64,7 @@ func TestHandlesEdgeCasesWithFewElements(t *testing.T) {
 	q.Pop()
 	q.Push(floatValue(2))
 	q.Push(floatValue(1))
-	assert.Equal(t, float64(q.Pop().(floatValue)), 1.0)
-	assert.Equal(t, float64(q.Pop().(floatValue)), 2.0)
-	assert.Equal(t, q.Pop(), nil)
+	assertEqual(t, float64(q.Pop().(floatValue)), 1.0)
+	assertEqual(t, float64(q.Pop().(floatValue)), 2.0)
+	assertEqual(t, q.Pop(), nil)
 }
